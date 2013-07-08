@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="page-header">
+    <h1>Train our Face Recognition Engine</h1>
+</div>
+<p class="lead">To make our face recognition engine knows more people, please upload pictures of people's name. <br>Tip: The more you upload, the smarter the engine is.</p>
+<form action="api/v1/faces/training" class="form-horizontal" enctype="multipart/form-data" method="POST">
+    <div class="control-group">
+        <label class="control-label" for="inputName">Name</label>
+        <div class="controls">
+            <input type="text" id="inputName" placeholder="Name" name="name">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="inputFile">Photo</label>
+        <div class="controls">
+            <input type="file" id="inputFile" placeholder="Pick an image file" name="file">
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-success">Upload</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

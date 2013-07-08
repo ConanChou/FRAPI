@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, g, url_for, make_response
+from flask import Flask, jsonify, request, g, url_for, make_response, render_template, redirect
 from werkzeug.exceptions import default_exceptions
 from werkzeug.exceptions import HTTPException
 from werkzeug import secure_filename
@@ -48,9 +48,20 @@ def teardown_request(exception):
     if db is not None:
         db.close()
 
+@app.route('/')
+def index():
+    return redirect(url_for('tester_index', page='trainer'))
+
 @app.route('/face_recognizer')
-def hello_world():
-    return 'Hello World!'
+def tester_default():
+    return redirect(url_for('tester_index', page='trainer'))
+
+@app.route('/face_recognizer/<page>')
+def tester_index(page):
+    if page == 'trainer':
+        return render_template('training.html', page_name=page)
+    else:
+        return render_template('testing.html', page_name=page)
 
 @app.route('/face_recognizer/api/v1/faces/training', methods=['POST'])
 def add_training_data():
@@ -111,11 +122,6 @@ def add_testing_data():
             'confidence': p_confidence
             }), 201
     return 400
-
-
-@app.route('/face_recognizer/api/v1/faces/<int:face_id>')
-def get_face(face_id):
-    pass
 
 @app.route('/images/<path:path>')
 def get_file(path):

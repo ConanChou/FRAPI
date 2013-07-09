@@ -16,5 +16,6 @@ def init(model_path, data_path):
         fr.load(model_path)
         with open(data_path, 'rb') as data_backup:
             category = pickle.load(data_backup)
+        is_trained = True
 
 

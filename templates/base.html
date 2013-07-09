@@ -72,6 +72,17 @@
     <!--[if lt IE 9]>
     <script src="{{ url_for('static', filename='js/html5shiv.js') }}"></script>
     <![endif]-->
+    <script type="text/javascript">
+        function startCallback() {
+            // make something useful before submit (onStart)
+            return true;
+        }
+
+        function completeCallback(response) {
+            // make something useful after (onComplete)
+            document.getElementById('r').innerHTML = response;
+        }
+    </script>
   </head>
 
   <body>
@@ -89,7 +100,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="brand" href="#">FRAPI</a>
+            <a class="brand" href=".">FRAPI Tester</a>
             <div class="nav-collapse collapse">
               <ul class="nav">
                   <li
@@ -112,6 +123,7 @@
       <div class="container">
         {% block body %}
         {% endblock %}
+      <div id="r" class="well"></div>
       </div>
 
       <div id="push"></div>
@@ -119,12 +131,12 @@
 
     <div id="footer">
       <div class="container">
-        <p class="muted credit">Created by <a href="http://conanchou.github.io">Conan</a>. Powered by Flask, OpenCV, Bootstrap.</p>
+          <p class="muted credit">Created by <a href="http://conanchou.github.io">Conan</a>. Powered by <a href="http://flask.pocoo.org/">Flask</a>, <a href="http://opencv.org/">OpenCV</a>, <a href="http://twitter.github.io/bootstrap/index.html">Bootstrap</a>.</p>
       </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/knockout.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>

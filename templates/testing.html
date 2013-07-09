@@ -4,7 +4,7 @@
     <h1>Test our Face Recognition Engine</h1>
 </div>
 <p class="lead">To test out how smart of our face recognition engine is, just upload a one person's photo.<br>Tip: Our engine will only give you the name if we are more than 70% sure about the result.</p>
-<form action="api/v1/faces/testing" class="form-horizontal" enctype="multipart/form-data" method="POST">
+<form action="api/v1/faces/testing" class="form-horizontal" enctype="multipart/form-data" method="POST" onsubmit="return AIM.submit(this, {'onStart' : startCallback, 'onComplete' : completeCallback})">
     <div class="control-group">
         <label class="control-label" for="inputFile">Photo</label>
         <div class="controls">
@@ -13,7 +13,9 @@
     </div>
     <div class="control-group">
         <div class="controls">
-            <button type="submit" class="btn btn-success">Upload</button>
+            <button type="submit" class="btn btn-success">
+                <i class="icon-upload icon-white"></i> Upload
+            </button>
         </div>
     </div>
 </form>

@@ -8,3 +8,5 @@ training
 testing
 test_data
 training_data
+*.xml
+*.pkl

@@ -2,11 +2,10 @@ from flask import Flask, jsonify, request, g, url_for, make_response, render_tem
 from werkzeug.exceptions import default_exceptions
 from werkzeug.exceptions import HTTPException
 from werkzeug import secure_filename
-from util import *
+from utils import *
 import os
 import globals
 
-globals.init()
 
 __all__ = ['make_json_app']
 
@@ -37,6 +36,7 @@ def make_json_app(import_name, **kwargs):
 app = make_json_app(__name__)
 app.config.from_object('config')
 
+globals.init(app.config['MODEL_BACKUP_NAME'], app.config['APP_DATA_BACKUP_NAME'])
 
 @app.before_request
 def before_request():
@@ -52,14 +52,14 @@ def teardown_request(exception):
 def index():
     return redirect(url_for('tester_index', page='trainer'))
 
-@app.route('/face_recognizer')
+@app.route('/face_recognizer/')
 def tester_default():
     return redirect(url_for('tester_index', page='trainer'))
 
 @app.route('/face_recognizer/<page>')
 def tester_index(page):
     if page == 'trainer':
-        return render_template('training.html', page_name=page)
+        return render_template('training.html', page_name=page, site_url=app.config['SITE_URL'])
     else:
         return render_template('testing.html', page_name=page)
 
@@ -76,11 +76,10 @@ def add_training_data():
         training_save_dir = os.path.join(app.config['FR_DIR'][type], face_name, file_name)
 
         file.save(upload_save_dir)
-        preprocess(type, upload_save_dir, file_name, face_name)
 
         id = insert_to_db(type, face_name, upload_save_dir, training_save_dir)
 
-        train_model(face_name, file_name)
+        train_model(type, upload_save_dir, file_name, face_name)
 
         return jsonify({
             'id'    : id,
@@ -93,6 +92,7 @@ def add_training_data():
 def add_testing_data():
     type = 'testing'
     file = request.files['file']
+    create_if_not_exists(os.path.join(app.config['UPLOAD_DIR'][type]))
     if file and allowed_file(file.filename):
         file_name = secure_filename(file.filename)
 
@@ -100,27 +100,11 @@ def add_testing_data():
         testing_save_dir = os.path.join(app.config['FR_DIR'][type], file_name)
 
         file.save(upload_save_dir)
-        preprocess(type, upload_save_dir, file_name)
 
         id = insert_to_db(type, None, upload_save_dir, testing_save_dir)
-
-        [p_label, p_confidence] = predict(file_name)
-
-        if p_confidence < 70 and p_confidence != 0:
-            return jsonify({
-                'id'     : id,
-                'uri'    : get_uri(type, None, file_name),
-                'message': 'face not recognized'
-                }), 201
-
-        names = [name for name, category in globals.category.items() if category == p_label]
-
-        return jsonify({
-            'id'        : id,
-            'uri'       : get_uri(type, None, file_name),
-            'prediction': names[0],
-            'confidence': p_confidence
-            }), 201
+        return_msg = {'id': id, 'uri': get_uri(type, None, file_name)}
+        return_msg.update(predict(type, upload_save_dir, file_name))
+        return jsonify(return_msg), 201
     return 400
 
 @app.route('/images/<path:path>')

@@ -4,7 +4,7 @@
     <h1>Train our Face Recognition Engine</h1>
 </div>
 <p class="lead">To make our face recognition engine knows more people, please upload pictures of people's name. <br>Tip: The more you upload, the smarter the engine is.</p>
-<form action="api/v1/faces/training" class="form-horizontal" enctype="multipart/form-data" method="POST">
+<form action="{{ site_url + url_for('add_training_data') }}" class="form-horizontal" enctype="multipart/form-data" onsubmit="return AIM.submit(this, {'onStart' : startCallback, 'onComplete' : completeCallback})" method="POST">
     <div class="control-group">
         <label class="control-label" for="inputName">Name</label>
         <div class="controls">
@@ -19,7 +19,9 @@
     </div>
     <div class="control-group">
         <div class="controls">
-            <button type="submit" class="btn btn-success">Upload</button>
+            <button class="btn btn-success">
+                <i class="icon-upload icon-white"></i> Upload
+            </button>
         </div>
     </div>
 </form>
